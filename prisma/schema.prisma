@@ -78,3 +78,19 @@ model Authenticator {
  
   @@id([userId, credentialID])
 }
+
+model Hospital {
+  id       String @id @default(cuid())
+  verified Boolean @default(false)
+  image String
+  ownermail  String
+  name String
+  latitude Float
+  longitude Float
+  streatadd String
+  city String
+  district String
+  state String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
