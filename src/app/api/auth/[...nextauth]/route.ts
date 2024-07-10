@@ -1,10 +1,10 @@
-import NextAuth, { NextAuthOptions, AuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaClient } from "@prisma/client";
 import { signInSchema } from "@/components/libs/zot";
-import { saltAndHashPassword, verifyPassword } from "@/components/utils/password";
 import { ZodError } from "zod";
+const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
 
@@ -22,16 +22,15 @@ const options: NextAuthOptions = {
 
           const user = await prisma.user.findUnique({
             where: { email },
-            // Explicitly include the password field in the result
-            select: { id: true, email: true, name: true, password: true },
+            select: { id: true, email: true, name: true, password: true, admin: true },
           });
 
-          if (!user || !(await verifyPassword(password, user.password||""))) {
+          if (!user || !bcrypt.compareSync(password, user.password)) {
             throw new Error("Invalid email or password");
           }
 
-          return { id: user.id, email: user.email, name: user.name };
-        } catch (error) {
+          return { id: user.id, email: user.email, name: user.name, admin: user.admin };
+        } catch (error: any) {
           if (error instanceof ZodError) {
             return null;
           }
@@ -46,12 +45,38 @@ const options: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'google') {
+        try {
+          let existingUser = await prisma.user.findUnique({
+            where: { email: user.email || '' },
+          });
+
+          if (!existingUser) {
+            existingUser = await prisma.user.create({
+              data: {
+                name: user.name,
+                email: user.email || '',
+                password: '',
+              },
+            });
+          }
+
+          return true;
+        } catch (error) {
+          console.error('Error creating user:', error);
+          return false;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.admin = user.admin;
       }
       return token;
     },
@@ -60,13 +85,18 @@ const options: NextAuthOptions = {
         session.user = {
           ...session.user,
           id: token.id as string,
+          admin: token.admin||false,
         };
       }
       return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
-export default function authHandler(req: any, res: any) {
-  return NextAuth(req, res, options);
-}
+const authHandler = async (req: any, res: any) => {
+  return await NextAuth(req, res, options);
+};
+
+export { authHandler as GET, authHandler as POST };
+export { options as authOptions };

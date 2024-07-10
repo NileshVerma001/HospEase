@@ -5,6 +5,7 @@ import "./globals.css";
 import AppProvider from "@/components/menue/AppContext";
 import Header from "@/components/layout/Header";
 import { LocationProvider } from "@/components/menue/LocationContext";
+import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] });
 const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"] });
 export const metadata: Metadata = {
@@ -23,11 +24,13 @@ export default function RootLayout({
         <main className="max-w mx-auto p-4">
           <AppProvider>
             <LocationProvider>
+              <Toaster/>
             <Header/>
             {children}
             <footer className="border-t p-8 text-center text-gray-500 mt-16">
               &copy; 2024 All rights reserved
             </footer>
+            
             </LocationProvider>
           </AppProvider>
         </main>
