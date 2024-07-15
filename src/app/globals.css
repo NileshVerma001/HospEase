@@ -6,6 +6,7 @@ elect,
 input[type="email"],
 input[type="password"],
 input[type="tel"],
+input[type="number"],
 input[type="text"] {
     @apply block w-full mb-2 rounded-xl;
     @apply border p-2 border-gray-300 bg-gray-100;

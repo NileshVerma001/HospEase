@@ -25,20 +25,28 @@ export async function POST(req: NextRequest) {
       city,
       district,
       state,
-      ownermail
+      ownermail,
+      avgprice,
+      totalbeds,
+      avaiblebeds,
+      doc,
     } = data;
 
     const newHospital = await prisma.hospital.create({
       data: {
         name,
         image,
-        latitude:parseFloat(latitude),
-        longitude:parseFloat(longitude),
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
         streatadd,
         city,
         district,
         state,
         ownermail,
+        avaiblebeds: parseFloat(avaiblebeds),
+        avgprice: parseFloat(avgprice),
+        totalbeds: parseFloat(totalbeds),
+        doc,
         verified: false
       },
     });
@@ -47,5 +55,26 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error creating hospital:', error);
     return NextResponse.json({ error: 'Error creating hospital' }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const data = await req.json();
+    const { id, avaiblebeds, totalbeds, avgprice } = data;
+
+    const updatedHospital = await prisma.hospital.update({
+      where: { id: id },
+      data: {
+        avaiblebeds: parseFloat(avaiblebeds),
+        totalbeds: parseFloat(totalbeds),
+        avgprice: parseFloat(avgprice),
+      },
+    });
+
+    return NextResponse.json(updatedHospital, { status: 200 });
+  } catch (error) {
+    console.error('Error updating hospital:', error);
+    return NextResponse.json({ error: 'Error updating hospital' }, { status: 500 });
   }
 }

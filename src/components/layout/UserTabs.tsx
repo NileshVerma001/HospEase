@@ -7,12 +7,15 @@ export default function UserTabs({isAdmin}:any){
     return(
         <div className="flex gap-2 tabs justify-center">
                 <Link className={path==='/profile'?'active':''} href={'/profile'}>Profile</Link>
-                <Link className={path==='/hospital'?'active':''} href={'/hospital'}>My Hospitals</Link>
+                {!isAdmin &&(
+                    <Link className={path==='/hospital'?'active':''} href={'/hospital'}>My Hospitals</Link>
+
+                )}
 
                 {isAdmin &&(
                     <>
-                    <Link className={path==='/categories'?'active':''} href={'/categories'}>Categories</Link>
-                    <Link className={path==='/menu-items'?'active':''} href={'/menu-items'}>Menu Items</Link>
+                    <Link className={path==='/hospitals'?'active':''} href={'/hospitals'}>Hospitals</Link>
+                    <Link className={path==='/hospitalpending'?'active':''} href={'/hospitalpending'}>Pending Hospitals</Link>
                     <Link className={path==='/users'?'active':''} href={'/users'}>Users</Link>
                     </>
                 )}

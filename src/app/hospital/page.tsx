@@ -4,8 +4,9 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import AddHospitalForm from "@/components/layout/AddHospitalForm"; // Adjust the import path as necessary
+import HospitalCard from "@/components/layout/HospitalCard"; // Adjust the import path as necessary
 
-interface Hospital {
+export interface Hospital {
   id: string;
   verified: boolean;
   image: string;
@@ -17,15 +18,19 @@ interface Hospital {
   city: string;
   district: string;
   state: string;
+  avgprice: number;
+  totalbeds: number;
+  avaiblebeds: number;
   createdAt: Date;
   updatedAt: Date;
+  doc: string;
 }
 
 export default function HospitalComponent() {
   const { data: session, status } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
   const [hospitalList, setHospitalList] = useState<Hospital[]>([]);
-  const [userHospital, setUserHospital] = useState<Hospital | null>(null);
+  const [userHospitals, setUserHospitals] = useState<Hospital[]>([]);
   const [usermail, setUsermail] = useState<string | null | undefined>(undefined);
   const [showForm, setShowForm] = useState(false);
 
@@ -39,8 +44,8 @@ export default function HospitalComponent() {
       setHospitalList(response.data);
 
       if (usermail) {
-        const userHospital = response.data.find((hospital: Hospital) => hospital.ownermail === usermail);
-        setUserHospital(userHospital || null);
+        const userHospitals = response.data.filter((hospital: Hospital) => hospital.ownermail === usermail);
+        setUserHospitals(userHospitals);
       }
     } catch (error) {
       console.error('Error fetching hospitals:', error);
@@ -54,8 +59,8 @@ export default function HospitalComponent() {
 
   useEffect(() => {
     if (usermail) {
-      const userHospital = hospitalList.find(hospital => hospital.ownermail === usermail);
-      setUserHospital(userHospital || null);
+      const userHospitals = hospitalList.filter(hospital => hospital.ownermail === usermail);
+      setUserHospitals(userHospitals);
     }
   }, [hospitalList, usermail]);
 
@@ -64,24 +69,29 @@ export default function HospitalComponent() {
     setShowForm(false);
   };
 
+  const handleEditHospital = (id: string, data: { avaiblebeds: number; totalbeds: number; avgprice: number }) => {
+    const updatedHospitals = hospitalList.map(hospital =>
+      hospital.id === id ? { ...hospital, ...data } : hospital
+    );
+    setHospitalList(updatedHospitals);
+    const updatedUserHospitals = userHospitals.map(hospital =>
+      hospital.id === id ? { ...hospital, ...data } : hospital
+    );
+    setUserHospitals(updatedUserHospitals);
+  };
+
   return (
     <section className="mt-8">
       <UserTabs isAdmin={isAdmin} />
-      {hospitalList.map(hospital => (
-        <div key={hospital.id}>
-          <p>{hospital.name}</p>
-        </div>
-      ))}
-      {userHospital && (
-        <div>
-          <h2>Your Hospital</h2>
-          <p>{userHospital.name}</p>
-        </div>
-      )}
-      <button onClick={() => setShowForm(!showForm)} className="mt-4 p-2 bg-blue-500 text-white rounded">
-        {showForm ? 'Cancel' : 'Add New Hospital'}
-      </button>
-      {showForm && <AddHospitalForm onSuccess={handleAddHospitalSuccess} usermail={usermail} />}
+      <div className="max-w-md mx-auto mt-8">
+        {userHospitals.map(hospital => (
+          <HospitalCard key={hospital.id} hospital={hospital} onEdit={handleEditHospital} />
+        ))}
+        <button onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : 'Add New Hospital'}
+        </button>
+        {showForm && <AddHospitalForm onSuccess={handleAddHospitalSuccess} usermail={usermail} />}
+      </div>
     </section>
   );
 }

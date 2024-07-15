@@ -91,6 +91,10 @@ model Hospital {
   city String
   district String
   state String
+  avgprice Float
+  totalbeds Float
+  avaiblebeds Float
+  doc String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
