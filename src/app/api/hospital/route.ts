@@ -17,35 +17,37 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
     const {
+      id,
       name,
       image,
       latitude,
       longitude,
-      streatadd,
+      address,
       city,
       district,
       state,
-      ownermail,
-      avgprice,
-      totalbeds,
-      avaiblebeds,
+      ownerMail,
+      avgBedPrice,
+      totalBeds,
+      bedsAvailable,
       doc,
     } = data;
 
     const newHospital = await prisma.hospital.create({
       data: {
+        id,
         name,
         image,
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
-        streatadd,
+        address,
         city,
         district,
         state,
-        ownermail,
-        avaiblebeds: parseFloat(avaiblebeds),
-        avgprice: parseFloat(avgprice),
-        totalbeds: parseFloat(totalbeds),
+        ownerMail,
+        bedsAvailable: parseFloat(bedsAvailable),
+        avgBedPrice: parseFloat(avgBedPrice),
+        totalBeds: parseFloat(totalBeds),
         doc,
         verified: false
       },
@@ -61,14 +63,14 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const data = await req.json();
-    const { id, avaiblebeds, totalbeds, avgprice } = data;
+    const { id, bedsAvailable, totalBeds, avgBedPrice } = data;
 
     const updatedHospital = await prisma.hospital.update({
       where: { id: id },
       data: {
-        avaiblebeds: parseFloat(avaiblebeds),
-        totalbeds: parseFloat(totalbeds),
-        avgprice: parseFloat(avgprice),
+        bedsAvailable: parseFloat(bedsAvailable),
+        totalBeds: parseFloat(totalBeds),
+        avgBedPrice: parseFloat(avgBedPrice),
       },
     });
 

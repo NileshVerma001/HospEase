@@ -46,7 +46,7 @@ export default function AprovedHospital() {
     <section className="mt-8">
       <UserTabs isAdmin={isAdmin}></UserTabs>
       <div className="max-w-md mx-auto mt-8">
-        
+        hi from divya
       </div>
     </section>
   );

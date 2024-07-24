@@ -5,17 +5,17 @@ import { Hospital } from "@/app/hospital/page"; // Adjust the import path as nec
 
 interface HospitalCardProps {
   hospital: Hospital;
-  onEdit: (id: string, data: { avaiblebeds: number; totalbeds: number; avgprice: number }) => void;
+  onEdit: (id: number, data: { bedsAvailable: number; totalBeds: number; avgBedPrice: number }) => void;
 }
 
 const HospitalCard = ({ hospital, onEdit }: HospitalCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [availableBeds, setAvailableBeds] = useState(hospital.avaiblebeds);
-  const [totalBeds, setTotalBeds] = useState(hospital.totalbeds);
-  const [avgPrice, setAvgPrice] = useState(hospital.avgprice);
+  const [availableBeds, setAvailableBeds] = useState(hospital.bedsAvailable);
+  const [totalBeds, setTotalBeds] = useState(hospital.totalBeds);
+  const [avgPrice, setAvgPrice] = useState(hospital.avgBedPrice);
 
   const handleSave = async () => {
-    const data = { avaiblebeds: availableBeds, totalbeds: totalBeds, avgprice: avgPrice };
+    const data = { bedsAvailable: availableBeds, totalBeds: totalBeds, avgBedPrice: avgPrice };
     try {
       await axios.put('/api/hospital', { id: hospital.id, ...data });
       onEdit(hospital.id, data);
@@ -30,8 +30,8 @@ const HospitalCard = ({ hospital, onEdit }: HospitalCardProps) => {
       <img src={hospital.image} alt={hospital.name} className="w-32 h-32 object-cover rounded-lg" />
       <div className="ml-4">
         <h2 className="text-xl font-bold color-primary">{hospital.name}</h2>
-        <p>{hospital.streatadd}, {hospital.city}, {hospital.state}</p>
-        <p>{hospital.ownermail}</p>
+        <p>{hospital.address}, {hospital.city}, {hospital.state}</p>
+        <p>{hospital.ownerMail}</p>
         <div className="mt-2">
           {isEditing ? (
               <>
@@ -78,9 +78,9 @@ const HospitalCard = ({ hospital, onEdit }: HospitalCardProps) => {
             </>
           ) : (
             <>
-              <p>Available Beds: {hospital.avaiblebeds}</p>
-              <p>Total Beds: {hospital.totalbeds}</p>
-              <p>Average Cost per Bed: ${hospital.avgprice}</p>
+              <p>Available Beds: {hospital.bedsAvailable}</p>
+              <p>Total Beds: {hospital.totalBeds}</p>
+              <p>Average Cost per Bed: ${hospital.avgBedPrice}</p>
               <button type="button" onClick={() => setIsEditing(true)}>Edit</button>
             </>
           )}

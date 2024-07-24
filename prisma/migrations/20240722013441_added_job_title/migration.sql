@@ -5,6 +5,8 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "emailVerified" TIMESTAMP(3),
     "image" TEXT,
+    "admin" BOOLEAN NOT NULL DEFAULT false,
+    "password" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -60,6 +62,29 @@ CREATE TABLE "Authenticator" (
     "transports" TEXT,
 
     CONSTRAINT "Authenticator_pkey" PRIMARY KEY ("userId","credentialID")
+);
+
+-- CreateTable
+CREATE TABLE "Hospital" (
+    "id" TEXT NOT NULL,
+    "verified" BOOLEAN NOT NULL DEFAULT false,
+    "image" TEXT NOT NULL,
+    "ownerMail" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "latitude" DOUBLE PRECISION NOT NULL,
+    "longitude" DOUBLE PRECISION NOT NULL,
+    "address" TEXT NOT NULL,
+    "city" TEXT NOT NULL,
+    "district" TEXT NOT NULL,
+    "state" TEXT NOT NULL,
+    "avgBedPrice" DOUBLE PRECISION NOT NULL,
+    "totalBeds" DOUBLE PRECISION NOT NULL,
+    "bedsAvailable" DOUBLE PRECISION NOT NULL,
+    "doc" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Hospital_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

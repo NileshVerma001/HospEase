@@ -7,23 +7,24 @@ import AddHospitalForm from "@/components/layout/AddHospitalForm"; // Adjust the
 import HospitalCard from "@/components/layout/HospitalCard"; // Adjust the import path as necessary
 
 export interface Hospital {
-  id: string;
+  id: number;
   verified: boolean;
   image: string;
-  ownermail: string;
+  ownerMail: string;
   name: string;
   latitude: number;
   longitude: number;
-  streatadd: string;
+  address: string;
   city: string;
   district: string;
   state: string;
-  avgprice: number;
-  totalbeds: number;
-  avaiblebeds: number;
-  createdAt: Date;
-  updatedAt: Date;
-  doc: string;
+  phoneNumber: string;
+  avgBedPrice: number;
+  totalBeds: number;
+  bedsAvailable: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  doc?: string;
 }
 
 export default function HospitalComponent() {
@@ -44,7 +45,7 @@ export default function HospitalComponent() {
       setHospitalList(response.data);
 
       if (usermail) {
-        const userHospitals = response.data.filter((hospital: Hospital) => hospital.ownermail === usermail);
+        const userHospitals = response.data.filter((hospital: Hospital) => hospital.ownerMail === usermail);
         setUserHospitals(userHospitals);
       }
     } catch (error) {
@@ -59,7 +60,7 @@ export default function HospitalComponent() {
 
   useEffect(() => {
     if (usermail) {
-      const userHospitals = hospitalList.filter(hospital => hospital.ownermail === usermail);
+      const userHospitals = hospitalList.filter(hospital => hospital.ownerMail === usermail);
       setUserHospitals(userHospitals);
     }
   }, [hospitalList, usermail]);
@@ -69,7 +70,7 @@ export default function HospitalComponent() {
     setShowForm(false);
   };
 
-  const handleEditHospital = (id: string, data: { avaiblebeds: number; totalbeds: number; avgprice: number }) => {
+  const handleEditHospital = (id: number, data: { bedsAvailable: number; totalBeds: number; avgBedPrice: number }) => {
     const updatedHospitals = hospitalList.map(hospital =>
       hospital.id === id ? { ...hospital, ...data } : hospital
     );

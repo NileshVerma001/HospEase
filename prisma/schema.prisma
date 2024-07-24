@@ -83,17 +83,17 @@ model Hospital {
   id       String @id @default(cuid())
   verified Boolean @default(false)
   image String
-  ownermail  String
+  ownerMail  String
   name String
   latitude Float
   longitude Float
-  streatadd String
+  address String
   city String
   district String
   state String
-  avgprice Float
-  totalbeds Float
-  avaiblebeds Float
+  avgBedPrice Float
+  totalBeds Float
+  bedsAvailable Float
   doc String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
