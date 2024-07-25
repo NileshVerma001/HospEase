@@ -2,7 +2,6 @@ import { useState } from "react";
 import axios from "axios";
 import EditableImage from "./EdidableImage";
 import File from "./File";
-import Map from "../map";
 
 interface AddHospitalFormProps {
   onSuccess: (hospital: any) => void;
@@ -31,7 +30,6 @@ interface Hospital {
 const AddHospitalForm = ({ onSuccess, usermail }: AddHospitalFormProps) => {
   const [image, setImage] = useState('');
   const [doc, setDoc] = useState('');
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [newHospital, setNewHospital] = useState<Hospital>({
     id: 0,
     name: '',
@@ -62,12 +60,22 @@ const AddHospitalForm = ({ onSuccess, usermail }: AddHospitalFormProps) => {
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/hospital', {
+      // Get the latitude and longitude by calling the API route
+      const geoResponse = await axios.get(`/api/geocode?address=${encodeURIComponent(newHospital.address+newHospital.city+newHospital.district+newHospital.state)}`);
+      const { lat, lng } = geoResponse.data;
+
+      // Set the latitude and longitude in the newHospital object
+      const hospitalWithCoordinates = {
         ...newHospital,
+        latitude: lat,
+        longitude: lng,
         doc: doc,
         image: image,
         ownerMail: usermail || ''
-      });
+      };
+
+      // Send the updated hospital data to the backend
+      const response = await axios.post('/api/hospital', hospitalWithCoordinates);
       onSuccess(response.data);
       setNewHospital({
         id: 0,
@@ -94,119 +102,75 @@ const AddHospitalForm = ({ onSuccess, usermail }: AddHospitalFormProps) => {
     }
   };
 
-  const handleLatandLong = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setNewHospital({
-            ...newHospital,
-            latitude,
-            longitude
-          });
-          setUserLocation({ lat: latitude, lng: longitude });
-        },
-        (error) => {
-          console.error('Error detecting location:', error);
-        },
-        { enableHighAccuracy: true }
-      );
-    } else {
-      console.error('Geolocation is not supported by this browser.');
-    }
-  };
-
   return (
-    <div className="mt-8 flex gap-4">
-      <div className="w-1/2">
-        <Map hospitals={[newHospital]} highlightedHospitalId={null} userLocation={userLocation} />
-      </div>
-      <div className="w-1/2">
+    <div className="mt-8 flex gap-2">
+      <div>
         <div className="p-2 rounded-lg relative">
           <EditableImage link={image} setLink={setImage} />
         </div>
-        <form onSubmit={handleFormSubmit} className="grow">
-          <div>
-            <label>
-              Name:
-              <input type="text" name="name" value={newHospital.name} onChange={handleInputChange} required />
-            </label>
-          </div>
-          <div className="flex gap-2 items-center">
-            <div>
-              <div>
-                <label>
-                  Latitude:
-                  <input type="number" name="latitude" disabled value={newHospital.latitude} onChange={handleInputChange} required />
-                </label>
-              </div>
-              <div>
-                <label>
-                  Longitude:
-                  <input type="number" name="longitude" disabled value={newHospital.longitude} onChange={handleInputChange} required />
-                </label>
-              </div>
-            </div>
-            <div>
-              <button onClick={handleLatandLong} type="button">Detect Coordinates</button>
-            </div>
-          </div>
-          <div>
-            <label>
-              Street Address:
-              <input type="text" name="address" value={newHospital.address} onChange={handleInputChange} required />
-            </label>
-          </div>
-          <div>
-            <label>
-              City:
-              <input type="text" name="city" value={newHospital.city} onChange={handleInputChange} required />
-            </label>
-          </div>
-          <div>
-            <label>
-              District:
-              <input type="text" name="district" value={newHospital.district} onChange={handleInputChange} required />
-            </label>
-          </div>
-          <div>
-            <label>
-              State:
-              <input type="text" name="state" value={newHospital.state} onChange={handleInputChange} required />
-            </label>
-          </div>
-          <div>
-            <File link={doc} setLink={setDoc} />
-          </div>
-          <div>
-            <label>
-              Total Beds:
-              <input type="number" name="totalBeds" value={newHospital.totalBeds} onChange={handleInputChange} required />
-            </label>
-          </div>
-          <div>
-            <label>
-              Available Beds:
-              <input type="number" name="bedsAvailable" value={newHospital.bedsAvailable} onChange={handleInputChange} required />
-            </label>
-          </div>
-          <div>
-            <label>
-              Average Bed Price:
-              <input type="number" name="avgBedPrice" value={newHospital.avgBedPrice} onChange={handleInputChange} required />
-            </label>
-          </div>
-          <div>
-            <label>
-              Phone Number:
-              <input type="text" name="phoneNumber" value={newHospital.phoneNumber} onChange={handleInputChange} required />
-            </label>
-          </div>
-          <button type="submit" className="mt-4 p-2 bg-green-500 text-white rounded">
-            Add Hospital
-          </button>
-        </form>
       </div>
+      <form onSubmit={handleFormSubmit} className="grow">
+        <div>
+          <label>
+            Hospital Name:
+            <input type="text" name="name" value={newHospital.name} onChange={handleInputChange} required />
+          </label>
+        </div>
+        <div>
+          <label>
+            Street Address:
+            <input type="text" name="address" value={newHospital.address} onChange={handleInputChange} required />
+          </label>
+        </div>
+        <div>
+          <label>
+            City:
+            <input type="text" name="city" value={newHospital.city} onChange={handleInputChange} required />
+          </label>
+        </div>
+        <div>
+          <label>
+            District:
+            <input type="text" name="district" value={newHospital.district} onChange={handleInputChange} required />
+          </label>
+        </div>
+        <div>
+          <label>
+            State:
+            <input type="text" name="state" value={newHospital.state} onChange={handleInputChange} required />
+          </label>
+        </div>
+        <div>
+          <File link={doc} setLink={setDoc} />
+        </div>
+        <div>
+          <label>
+            Total Beds:
+            <input type="number" name="totalBeds" value={newHospital.totalBeds} onChange={handleInputChange} required />
+          </label>
+        </div>
+        <div>
+          <label>
+            Available Beds:
+            <input type="number" name="bedsAvailable" value={newHospital.bedsAvailable} onChange={handleInputChange} required />
+          </label>
+        </div>
+        <div>
+          <label>
+            Average Bed Price:
+            <input type="number" name="avgBedPrice" value={newHospital.avgBedPrice} onChange={handleInputChange} required />
+          </label>
+        </div>
+        <div>
+          <label>
+            Phone Number:
+            <input type="text" name="phoneNumber" value={newHospital.phoneNumber} onChange={handleInputChange} required />
+          </label>
+        </div>
+        <button type="submit" className="mt-4 p-2 bg-green-500 text-white rounded">
+          Add Hospital
+        </button>
+      </form>
     </div>
   );
 };

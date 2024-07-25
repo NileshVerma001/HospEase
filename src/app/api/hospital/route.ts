@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
       avgBedPrice,
       totalBeds,
       bedsAvailable,
+      phoneNumber,
       doc,
     } = data;
 
@@ -47,6 +48,7 @@ export async function POST(req: NextRequest) {
         avgBedPrice: parseFloat(avgBedPrice),
         totalBeds: parseFloat(totalBeds),
         doc,
+        phoneNumber,
         verified: false
       },
     });
