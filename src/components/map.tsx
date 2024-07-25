@@ -27,7 +27,7 @@ const Map: React.FC<MapProps> = ({ hospitals, highlightedHospitalId }) => {
   const highlightedHospital = hospitals.find(h => h.id === highlightedHospitalId);
 
   return (
-    <LoadScript googleMapsApiKey="AIzaSyCU9Cdnj7TSzLCRK1Ft9KUFVYEkDqSSxQE">
+    <LoadScript googleMapsApiKey="">
       <GoogleMap
         mapContainerStyle={{ width: '100%', height: '400px' }}
         center={highlightedHospital ? { lat: highlightedHospital.latitude, lng: highlightedHospital.longitude } : currentLocation}
