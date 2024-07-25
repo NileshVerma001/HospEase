@@ -9,11 +9,31 @@ interface AddHospitalFormProps {
   usermail: string | null | undefined;
 }
 
+interface Hospital {
+  id: number;
+  name: string;
+  image: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  city: string;
+  district: string;
+  state: string;
+  avgBedPrice: number;
+  totalBeds: number;
+  bedsAvailable: number;
+  doc: string;
+  verified: boolean;
+  ownerMail: string;
+  phoneNumber: string;
+}
+
 const AddHospitalForm = ({ onSuccess, usermail }: AddHospitalFormProps) => {
   const [image, setImage] = useState('');
   const [doc, setDoc] = useState('');
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [newHospital, setNewHospital] = useState({
+  const [newHospital, setNewHospital] = useState<Hospital>({
+    id: 0,
     name: '',
     image: '',
     latitude: 0,
@@ -25,7 +45,10 @@ const AddHospitalForm = ({ onSuccess, usermail }: AddHospitalFormProps) => {
     avgBedPrice: 0,
     totalBeds: 0,
     bedsAvailable: 0,
-    doc: ''
+    doc: '',
+    verified: false,
+    ownerMail: '',
+    phoneNumber: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,10 +66,11 @@ const AddHospitalForm = ({ onSuccess, usermail }: AddHospitalFormProps) => {
         ...newHospital,
         doc: doc,
         image: image,
-        ownermail: usermail
+        ownerMail: usermail || ''
       });
       onSuccess(response.data);
       setNewHospital({
+        id: 0,
         name: '',
         image: '',
         latitude: 0,
@@ -58,9 +82,13 @@ const AddHospitalForm = ({ onSuccess, usermail }: AddHospitalFormProps) => {
         avgBedPrice: 0,
         totalBeds: 0,
         bedsAvailable: 0,
-        doc: ''
+        doc: '',
+        verified: false,
+        ownerMail: '',
+        phoneNumber: ''
       });
       setImage('');
+      setDoc('');
     } catch (error) {
       console.error('Error adding hospital:', error);
     }
@@ -166,6 +194,12 @@ const AddHospitalForm = ({ onSuccess, usermail }: AddHospitalFormProps) => {
             <label>
               Average Bed Price:
               <input type="number" name="avgBedPrice" value={newHospital.avgBedPrice} onChange={handleInputChange} required />
+            </label>
+          </div>
+          <div>
+            <label>
+              Phone Number:
+              <input type="text" name="phoneNumber" value={newHospital.phoneNumber} onChange={handleInputChange} required />
             </label>
           </div>
           <button type="submit" className="mt-4 p-2 bg-green-500 text-white rounded">

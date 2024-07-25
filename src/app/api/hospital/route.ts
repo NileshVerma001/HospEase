@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
     const {
-      id,
       name,
       image,
       latitude,
@@ -35,7 +34,6 @@ export async function POST(req: NextRequest) {
 
     const newHospital = await prisma.hospital.create({
       data: {
-        id,
         name,
         image,
         latitude: parseFloat(latitude),
@@ -59,6 +57,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Error creating hospital' }, { status: 500 });
   }
 }
+
 
 export async function PUT(req: NextRequest) {
   try {

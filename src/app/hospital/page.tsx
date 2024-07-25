@@ -8,24 +8,23 @@ import HospitalCard from "@/components/layout/HospitalCard"; // Adjust the impor
 
 export interface Hospital {
   id: number;
-  verified: boolean;
-  image: string;
-  ownerMail: string;
   name: string;
+  image: string;
   latitude: number;
   longitude: number;
   address: string;
   city: string;
   district: string;
   state: string;
-  phoneNumber: string;
   avgBedPrice: number;
   totalBeds: number;
   bedsAvailable: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-  doc?: string;
+  doc: string;
+  verified: boolean;
+  ownerMail: string;
+  phoneNumber: string;
 }
+
 
 export default function HospitalComponent() {
   const { data: session, status } = useSession();

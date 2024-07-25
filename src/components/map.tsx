@@ -8,6 +8,7 @@ import { Hospital } from '@/app/hospital/page';
 interface MapProps {
   hospitals: Hospital[];
   highlightedHospitalId: number | null;
+  userLocation: { lat: number; lng: number } | null;
 }
 
 const Map: React.FC<MapProps> = ({ hospitals, highlightedHospitalId }) => {
@@ -25,9 +26,14 @@ const Map: React.FC<MapProps> = ({ hospitals, highlightedHospitalId }) => {
   }, []);
 
   const highlightedHospital = hospitals.find(h => h.id === highlightedHospitalId);
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'bhabh';
+
+  if (!apiKey) {
+    return <div>Error: Google Maps API key is not set</div>;
+  }
 
   return (
-    <LoadScript googleMapsApiKey="">
+    <LoadScript googleMapsApiKey={apiKey}>
       <GoogleMap
         mapContainerStyle={{ width: '100%', height: '400px' }}
         center={highlightedHospital ? { lat: highlightedHospital.latitude, lng: highlightedHospital.longitude } : currentLocation}
