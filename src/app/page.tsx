@@ -1,21 +1,10 @@
-"use client"
-import HospList from "@/components/layout/HospList";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Hospital } from "./hospital/page";
-import Map from "@/components/map";
-
-// interface Hospital {
-//   id: number;
-//   name: string;
-//   latitude: number;
-//   longitude: number;
-//   bedsAvailable: number;
-//   avgBedPrice: number;
-//   address: string;
-//   phoneNumber: string;
-//   totalBeds: number;
-// }
+// pages/index.tsx
+"use client";
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Hospital } from '@/app/hospital/page';
+import HospList from '@/components/layout/HospList';
+import Map from '@/components/map';
 
 export default function Home() {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -39,14 +28,14 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-semibold mb-4">List of Hospitals</h1>
-      <HospList hospitals={hospitals} onHospitalClick={handleHospitalClick} />
-      <br />
-      <br />
-      <Map hospitals={hospitals} highlightedHospitalId={highlightedHospitalId} />
-      <br />
-      <br />
+    <div className="container mx-auto px-4 flex">
+      <div className="w-1/3 pr-4">
+        <h1 className="text-3xl font-semibold mb-4">List of Hospitals</h1>
+        <HospList hospitals={hospitals} onHospitalClick={handleHospitalClick} />
+      </div>
+      <div className="w-2/3 h-screen">
+        <Map hospitals={hospitals} highlightedHospitalId={highlightedHospitalId} />
+      </div>
     </div>
   );
 }

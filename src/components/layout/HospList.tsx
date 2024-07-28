@@ -1,20 +1,7 @@
-"use client"
+"use client";
 import { useState } from 'react';
 import { useLocation } from '../menue/LocationContext';
 import { Hospital } from '@/app/hospital/page';
-
-// interface Hospital {
-//   id: number;
-//   name: string;
-//   bedsAvailable: number;
-//   avgBedPrice: number;
-//   latitude: number;
-//   longitude: number;
-//   address: string;
-//   phoneNumber: string;
-//   totalBeds: number;
-//   // Add more details as needed
-// }
 
 interface HospListProps {
   hospitals: Hospital[];
@@ -59,7 +46,7 @@ const HospList: React.FC<HospListProps> = ({ hospitals, onHospitalClick }) => {
   const sortedHospitals = sortHospitalsByDistance();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4">
       {sortedHospitals.map((hospital) => (
         <div
           key={hospital.id}
@@ -69,7 +56,10 @@ const HospList: React.FC<HospListProps> = ({ hospitals, onHospitalClick }) => {
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-semibold">{hospital.name}</h2>
             <button
-              onClick={() => toggleExpanded(hospital.id)}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent onClick from triggering
+                toggleExpanded(hospital.id);
+              }}
               className="text-gray-500 hover:text-gray-700 focus:outline-none"
             >
               {expandedHospital === hospital.id ? '▲' : '▼'}

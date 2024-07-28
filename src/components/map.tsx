@@ -1,14 +1,15 @@
+
 // components/Map.tsx
 "use client";
 import { useEffect, useState } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { Hospital } from '@/app/hospital/page';
 
+// Define MapProps interface here
 
 interface MapProps {
   hospitals: Hospital[];
   highlightedHospitalId: number | null;
-  userLocation: { lat: number; lng: number } | null;
 }
 
 const Map: React.FC<MapProps> = ({ hospitals, highlightedHospitalId }) => {
@@ -19,7 +20,7 @@ const Map: React.FC<MapProps> = ({ hospitals, highlightedHospitalId }) => {
       navigator.geolocation.getCurrentPosition((position) => {
         setCurrentLocation({
           lat: position.coords.latitude,
-          lng: position.coords.longitude, 
+          lng: position.coords.longitude,
         });
       });
     }
@@ -35,7 +36,7 @@ const Map: React.FC<MapProps> = ({ hospitals, highlightedHospitalId }) => {
   return (
     <LoadScript googleMapsApiKey={apiKey}>
       <GoogleMap
-        mapContainerStyle={{ width: '100%', height: '400px' }}
+        mapContainerStyle={{ width: '115%', height: '100%' }}
         center={highlightedHospital ? { lat: highlightedHospital.latitude, lng: highlightedHospital.longitude } : currentLocation}
         zoom={highlightedHospital ? 15 : 12}
       >
