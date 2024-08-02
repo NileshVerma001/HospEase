@@ -12,7 +12,7 @@ const HospList: React.FC<HospListProps> = ({ hospitals, onHospitalClick }) => {
   const { location } = useLocation(); // Retrieve location data from context
   const [expandedHospital, setExpandedHospital] = useState<number | null>(null);
 
-  // Function to calculate distance between two coordinates using Haversine formula
+  // Function to calculate distance between two coordinates using the Haversine formula
   const calculateDistance = (lat2: number, lon2: number) => {
     const lat1 = location.latitude || 0; // Use latitude from context
     const lon1 = location.longitude || 0; // Use longitude from context
@@ -46,38 +46,45 @@ const HospList: React.FC<HospListProps> = ({ hospitals, onHospitalClick }) => {
   const sortedHospitals = sortHospitalsByDistance();
 
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="space-y-4">
       {sortedHospitals.map((hospital) => (
         <div
           key={hospital.id}
-          className="border rounded-lg p-4 shadow-md cursor-pointer"
+          className={`border rounded-lg p-6 shadow-lg cursor-pointer transition transform hover:scale-105 ${
+            expandedHospital === hospital.id ? 'bg-blue-50' : 'bg-white'
+          }`}
           onClick={() => onHospitalClick(hospital.id)}
         >
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-semibold">{hospital.name}</h2>
+          <div className="flex items-center mb-4">
+            <img src={hospital.image} alt={hospital.name} className="w-16 h-16 rounded-md mr-4"/>
+            <div className="flex-grow">
+              <h2 className="text-xl font-semibold text-gray-900">{hospital.name}</h2>
+              <p className="text-sm text-gray-700">{hospital.address}, {hospital.city}, {hospital.district}, {hospital.state}</p>
+              <p className="text-sm text-gray-700">Phone: {hospital.phoneNumber}</p>
+              <p className="text-sm text-gray-700">Avg Bed Price: ${hospital.avgBedPrice}</p>
+              <p className="text-sm text-gray-700">Total Beds: {hospital.totalBeds}</p>
+              <p className="text-sm text-gray-700">Beds Available: {hospital.bedsAvailable}</p>
+              <p className="text-sm text-gray-700">Distance: {calculateDistance(hospital.latitude, hospital.longitude)} km</p>
+              {hospital.verified && (
+                <p className="text-sm text-green-600">Verified</p>
+              )}
+            </div>
             <button
               onClick={(e) => {
                 e.stopPropagation(); // Prevent onClick from triggering
                 toggleExpanded(hospital.id);
               }}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-150 ease-in-out"
             >
               {expandedHospital === hospital.id ? '▲' : '▼'}
             </button>
           </div>
           {expandedHospital === hospital.id && (
-            <div className="mt-2">
-              <p><strong>Hospital Number:</strong> {hospital.phoneNumber}</p>
-              <p><strong>Address:</strong> {hospital.address}</p>
-              <p><strong>Total Beds:</strong> {hospital.totalBeds}</p>
-              {/* Add more details as needed */}
+            <div className="mt-4 text-sm text-gray-600">
+              <p><strong>Owner Email:</strong> {hospital.ownerMail}</p>
+              <p><strong>Doctor:</strong> {hospital.doc}</p>
             </div>
           )}
-          <div className="mt-4">
-            <p><strong>Beds Available:</strong> {hospital.bedsAvailable}</p>
-            <p><strong>Avg Bed Price:</strong> ${hospital.avgBedPrice}</p>
-            <p><strong>Distance:</strong> {calculateDistance(hospital.latitude, hospital.longitude)} km</p>
-          </div>
         </div>
       ))}
     </div>
