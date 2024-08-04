@@ -46,27 +46,26 @@ const HospList: React.FC<HospListProps> = ({ hospitals, onHospitalClick }) => {
   const sortedHospitals = sortHospitalsByDistance();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {sortedHospitals.map((hospital) => (
         <div
           key={hospital.id}
-          className={`border rounded-lg p-6 shadow-lg cursor-pointer transition transform hover:scale-105 ${
-            expandedHospital === hospital.id ? 'bg-blue-50' : 'bg-white'
-          }`}
+          className={`border rounded-lg p-6 shadow-lg cursor-pointer transition-transform transform hover:scale-105 ${expandedHospital === hospital.id ? 'bg-blue-50' : 'bg-white'
+            }`}
           onClick={() => onHospitalClick(hospital.id)}
         >
-          <div className="flex items-center mb-4">
-            <img src={hospital.image} alt={hospital.name} className="w-16 h-16 rounded-md mr-4"/>
+          <div className="flex items-start mb-4">
+            <img src={hospital.image} alt={hospital.name} className="w-20 h-20 rounded-lg mr-6 shadow-md" />
             <div className="flex-grow">
-              <h2 className="text-xl font-semibold text-gray-900">{hospital.name}</h2>
-              <p className="text-sm text-gray-700">{hospital.address}, {hospital.city}, {hospital.district}, {hospital.state}</p>
-              <p className="text-sm text-gray-700">Phone: {hospital.phoneNumber}</p>
-              <p className="text-sm text-gray-700">Avg Bed Price: ${hospital.avgBedPrice}</p>
-              <p className="text-sm text-gray-700">Total Beds: {hospital.totalBeds}</p>
-              <p className="text-sm text-gray-700">Beds Available: {hospital.bedsAvailable}</p>
-              <p className="text-sm text-gray-700">Distance: {calculateDistance(hospital.latitude, hospital.longitude)} km</p>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">{hospital.name}</h2>
+              <p className="text-sm text-gray-700 mb-1">{hospital.address}, {hospital.city}, {hospital.district}, {hospital.state}</p>
+              <p className="text-sm text-gray-700 mb-1">Phone: {hospital.phoneNumber}</p>
+              <p className="text-sm text-gray-700 mb-1">Avg Bed Price: Rs.{hospital.avgBedPrice}</p>
+              <p className="text-sm text-gray-700 mb-1">Total Beds: {hospital.totalBeds}</p>
+              <p className="text-sm text-gray-700 mb-1">Beds Available: {hospital.bedsAvailable}</p>
+              <p className="text-sm text-gray-700 mb-1">Distance: {calculateDistance(hospital.latitude, hospital.longitude)} km</p>
               {hospital.verified && (
-                <p className="text-sm text-green-600">Verified</p>
+                <p className="text-sm text-green-600 font-semibold">Verified</p>
               )}
             </div>
             <button
@@ -74,15 +73,20 @@ const HospList: React.FC<HospListProps> = ({ hospitals, onHospitalClick }) => {
                 e.stopPropagation(); // Prevent onClick from triggering
                 toggleExpanded(hospital.id);
               }}
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-150 ease-in-out"
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-150 ease-in-out"
             >
               {expandedHospital === hospital.id ? '▲' : '▼'}
             </button>
           </div>
           {expandedHospital === hospital.id && (
             <div className="mt-4 text-sm text-gray-600">
-              <p><strong>Owner Email:</strong> {hospital.ownerMail}</p>
-              <p><strong>Doctor:</strong> {hospital.doc}</p>
+              <p className="text-gray-800 font-semibold mb-2">Specialties:</p>
+              <ul className="list-disc list-inside text-gray-700 mb-2">
+                {hospital.specialties.map((specialty, index) => (
+                  <li key={index}>{specialty}</li>
+                ))}
+              </ul>
+              <p><strong className="text-gray-800">Owner Email:</strong> {hospital.ownerMail}</p>
             </div>
           )}
         </div>

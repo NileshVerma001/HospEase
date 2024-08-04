@@ -24,6 +24,21 @@ label + input{
     margin-top: -2px;
 }
 
+@font-face {
+  font-family: 'ProductSans';
+  src: url('/fonts/ProductSans.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.Header{
+  font-family: 'ProductSans';
+}
+
+body {
+  font-family: 'ProductSans', sans-serif;
+}
+
 button, .button{
     @apply flex w-full justify-center gap-2 text-gray-700 font-semibold;
     @apply border border-gray-300 rounded-xl px-6 py-2;

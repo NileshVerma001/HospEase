@@ -5,17 +5,29 @@ import { Hospital } from "@/app/hospital/page"; // Adjust the import path as nec
 
 interface HospitalCardProps {
   hospital: Hospital;
-  onEdit: (id: number, data: { bedsAvailable: number; totalBeds: number; avgBedPrice: number }) => void;
+  onEdit: (id: number, data: { bedsAvailable: number; totalBeds: number; avgBedPrice: number; specialties: string[]  }) => void;
 }
+
+const specialtiesList = [
+  "Cardiologist", "Neurologist", "Oncologist", "Endocrinologist",
+  "Rheumatologist", "Gastroenterologist", "Pulmonologist", "Nephrologist",
+  "Dermatologist", "Hematologist", "Allergist", "Urologist",
+  "Infectious Disease Specialist", "Ophthalmologist", "Otolaryngologist (ENT)",
+  "Psychiatrist", "Orthopedic Surgeon", "Anesthesiologist", "Pathologist",
+  "General Surgeon"
+];
+
 
 const HospitalCard = ({ hospital, onEdit }: HospitalCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [availableBeds, setAvailableBeds] = useState(hospital.bedsAvailable);
   const [totalBeds, setTotalBeds] = useState(hospital.totalBeds);
   const [avgPrice, setAvgPrice] = useState(hospital.avgBedPrice);
+  const [specialties, setSpecialties] = useState<string[]>(hospital.specialties);
+
 
   const handleSave = async () => {
-    const data = { bedsAvailable: availableBeds, totalBeds: totalBeds, avgBedPrice: avgPrice };
+    const data = { bedsAvailable: availableBeds, totalBeds: totalBeds, avgBedPrice: avgPrice, specialties };
     try {
       await axios.put('/api/hospital', { id: hospital.id, ...data });
       onEdit(hospital.id, data);
@@ -23,6 +35,13 @@ const HospitalCard = ({ hospital, onEdit }: HospitalCardProps) => {
     } catch (error) {
       console.error('Error updating hospital:', error);
     }
+  };
+
+  const handleSpecialtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    setSpecialties(prev =>
+      checked ? [...prev, value] : prev.filter(specialty => specialty !== value)
+    );
   };
 
   return (
@@ -74,13 +93,33 @@ const HospitalCard = ({ hospital, onEdit }: HospitalCardProps) => {
 
                 </label>
             </div>
+            <div>
+                <label>
+                  Specialties:
+                  {specialtiesList.map((specialty, index) => (
+                    <div key={index}>
+                      <input
+                        type="checkbox"
+                        name="specialties"
+                        value={specialty}
+                        checked={specialties.includes(specialty)}
+                        onChange={handleSpecialtyChange}
+                      />
+                      {specialty}
+                    </div>
+                  ))}
+                </label>
+              </div>
+
+
               <button type="submit" onClick={handleSave}>Save</button>
             </>
           ) : (
             <>
               <p>Available Beds: {hospital.bedsAvailable}</p>
               <p>Total Beds: {hospital.totalBeds}</p>
-              <p>Average Cost per Bed: ${hospital.avgBedPrice}</p>
+              <p>Average Cost per Bed: Rs. {hospital.avgBedPrice}</p>
+              <p>Specialties: {hospital.specialties.join(', ')}</p>
               <button type="button" onClick={() => setIsEditing(true)}>Edit</button>
             </>
           )}

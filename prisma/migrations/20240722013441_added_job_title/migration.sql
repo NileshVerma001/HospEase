@@ -83,7 +83,7 @@ CREATE TABLE "Hospital" (
     "doc" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-
+    "specialties" TEXT[],
     CONSTRAINT "Hospital_pkey" PRIMARY KEY ("id")
 );
 

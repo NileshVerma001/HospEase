@@ -23,6 +23,7 @@ export interface Hospital {
   verified: boolean;
   ownerMail: string;
   phoneNumber: string;
+  specialties: string[];
 }
 
 
